@@ -13,17 +13,35 @@ install.packages('purrr')
 ```{r}
 library(magick)
 library(purrr)
+# List Files
 profiles <- 
-    fs::dir_ls("profilePhotos") |>
-    map(image_read)
+    fs::dir_ls("profilePhotos")
+# 2. Wrap magick::image_read with `safely()`
+safe_read <- safely(magick::image_read)
 
+results <- map(profiles, safe_read)
+
+# 4. Identify failures
+failed <- map_lgl(results, ~ !is.null(.x$error))
+
+# Print which files failed
+if (any(failed)) {
+  message("❌ Failed to read these files:")
+  print(profiles[failed])
+}
+
+# 5. Keep only the successful image objects
+profile_images <- map(results[!failed], "result")
 
 ```
 
 ```{r}
-files <- list.files("profilePhotos", pattern = "\\.jpg$", full.names = TRUE)
+typeOf(profile_images)
+class(5)
+```
 
-files[2]
-file.info(files[2])
+
+```{r}
+rmats <- as.raster(profile_images)
 
 ```
