@@ -1,0 +1,29 @@
+---
+title: "Profile Photo Data Set Practice"
+format: typst
+author: David Lee
+
+---
+
+```{r}
+#| echo: true
+install.packages('magick')
+install.packages('purrr')
+```
+```{r}
+library(magick)
+library(purrr)
+profiles <- 
+    fs::dir_ls("profilePhotos") |>
+    map(image_read)
+
+
+```
+
+```{r}
+files <- list.files("profilePhotos", pattern = "\\.jpg$", full.names = TRUE)
+
+files[2]
+file.info(files[2])
+
+```
